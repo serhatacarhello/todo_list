@@ -1,4 +1,4 @@
-function Input({ value, type, onChange, placeholder, className }) {
+function Input({ value, type, onChange, placeholder, className, autoFocus, onBlur, onKeyDown, checked }) {
   return (
     <input
       type={type}
@@ -6,6 +6,10 @@ function Input({ value, type, onChange, placeholder, className }) {
       onChange={onChange}
       placeholder={placeholder}
       className={className}
+      autoFocus={autoFocus}
+      onBlur={onBlur}
+      onKeyDown={onKeyDown}
+      checked={checked}
     />
   );
 }

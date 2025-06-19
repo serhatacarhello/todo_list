@@ -119,7 +119,6 @@ function App() {
                   onChange={() => handleToggle(todo.id)}
                 />
                 <label 
-                  onDoubleClick={() => startEditing(todo.id, todo.text)}
                   onClick={() => startEditing(todo.id, todo.text)}
                 >
                   {todo.text}
@@ -137,7 +136,7 @@ function App() {
                   onChange={(e) => setEditingText(e.target.value)}
                   onBlur={() => saveEdit(todo.id)}
                   onKeyDown={(e) => handleEditKeyDown(e, todo.id)}
-                  autoFocus
+                  autoFocus={true}
                 />
               )}
             </li>
