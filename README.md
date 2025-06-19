@@ -24,3 +24,5 @@ cd todo_list
 npm install
 npm start
 ```
+
+![app_img](src/assets/app_img.png)
