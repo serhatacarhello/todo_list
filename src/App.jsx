@@ -15,7 +15,6 @@ function App() {
 
   useEffect(() => {
     const storedTodos = JSON.parse(localStorage.getItem("todos"));
-    console.log(storedTodos);
     if (storedTodos && storedTodos.length > 0) {
       setTodos(storedTodos);
     } else {
