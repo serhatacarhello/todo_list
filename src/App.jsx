@@ -10,11 +10,13 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [text, setText] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState("");
 
   useEffect(() => {
     const storedTodos = JSON.parse(localStorage.getItem("todos"));
     console.log(storedTodos);
-    if (storedTodos.length > 0) {
+    if (storedTodos && storedTodos.length > 0) {
       setTodos(storedTodos);
     } else {
       setTodos([
@@ -35,6 +37,7 @@ function App() {
     setTodos([...todos, { id: Date.now(), text, completed: false }]);
     setText("");
   };
+
   const handleToggle = (id) => {
     const updated = todos.map((todo) =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
@@ -45,6 +48,38 @@ function App() {
   const handleDelete = (id) => {
     const updated = todos.filter((todo) => todo.id !== id);
     setTodos(updated);
+  };
+
+  const startEditing = (id, currentText) => {
+    setEditingId(id);
+    setEditingText(currentText);
+  };
+
+  const saveEdit = (id) => {
+    if (!editingText.trim()) {
+      handleDelete(id);
+      return;
+    }
+    
+    const updated = todos.map((todo) =>
+      todo.id === id ? { ...todo, text: editingText.trim() } : todo
+    );
+    setTodos(updated);
+    setEditingId(null);
+    setEditingText("");
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditingText("");
+  };
+
+  const handleEditKeyDown = (e, id) => {
+    if (e.key === "Enter") {
+      saveEdit(id);
+    } else if (e.key === "Escape") {
+      cancelEdit();
+    }
   };
 
   const clearCompleted = () => {
@@ -72,7 +107,10 @@ function App() {
       <section className="main">
         <ul className="todo-list">
           {filteredTodos.map((todo) => (
-            <li key={todo.id} className={todo.completed ? "completed" : ""}>
+            <li 
+              key={todo.id} 
+              className={`${todo.completed ? "completed" : ""} ${editingId === todo.id ? "editing" : ""}`}
+            >
               <div className="view">
                 <Input
                   className="toggle"
@@ -80,12 +118,28 @@ function App() {
                   checked={todo.completed}
                   onChange={() => handleToggle(todo.id)}
                 />
-                <label>{todo.text}</label>
+                <label 
+                  onDoubleClick={() => startEditing(todo.id, todo.text)}
+                  onClick={() => startEditing(todo.id, todo.text)}
+                >
+                  {todo.text}
+                </label>
                 <Button
                   className="destroy"
                   onClick={() => handleDelete(todo.id)}
                 ></Button>
               </div>
+              {editingId === todo.id && (
+                <Input
+                  className="edit"
+                  type="text"
+                  value={editingText}
+                  onChange={(e) => setEditingText(e.target.value)}
+                  onBlur={() => saveEdit(todo.id)}
+                  onKeyDown={(e) => handleEditKeyDown(e, todo.id)}
+                  autoFocus
+                />
+              )}
             </li>
           ))}
         </ul>
